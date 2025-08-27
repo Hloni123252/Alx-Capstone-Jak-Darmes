@@ -4,20 +4,21 @@ from .models import Product, Order, OrderItem
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = "__all__"
-
+        fields = '__all__'
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source='product', write_only=True
+    )
 
     class Meta:
         model = OrderItem
-        fields = ["id", "product", "quantity"]
-
+        fields = ['id', 'product', 'product_id', 'quantity', 'price']
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ["id", "created_at", "updated_at", "items"]
+        fields = ['id', 'customer', 'date_ordered', 'status', 'items']
